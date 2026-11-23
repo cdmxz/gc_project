@@ -2,7 +2,21 @@
 
 PyTorch 迁移学习（ResNet18 / MobileNetV3-Small）+ TensorBoard 训练可视化 + Flask 实时推理前端，六类生活垃圾（纸板 / 玻璃 / 金属 / 纸张 / 塑料 / 其他垃圾）图像分类，深度学习案例项目作业。
 
-## 1. 目录结构
+## 1. 项目简介
+
+- **任务**：六类生活垃圾（纸板 / 玻璃 / 金属 / 纸张 / 塑料 / 其他垃圾）单张图片分类，输出类别、置信度、Top-3 与投放建议
+- **数据**：飞桨 AI Studio 公开数据集「垃圾分类」（编号 128034），6 类 2527 张实拍图，清洗去重后 2524 张
+- **模型**：ImageNet 预训练迁移学习，最终权重 MobileNetV3-Small，参数量 1,524,006
+- **结果**：测试集准确率 89.15%，Macro-F1 0.8867，Top-3 准确率 98.68%，GPU 单张推理约 6 ms
+- **系统**：PyTorch 训练 + TensorBoard 监控 + Flask 后端 + 原生 HTML/CSS/JS 前端，上传即推理
+
+## 2. 源码地址
+
+- 平台：GitHub
+- 项目地址：https://github.com/cdmxz/gc_project
+- 仓库可见性：公开
+
+## 3. 目录结构
 
 ```
 .
@@ -26,7 +40,7 @@ PyTorch 迁移学习（ResNet18 / MobileNetV3-Small）+ TensorBoard 训练可视
 ├─ outputs/                     评估结果、混淆矩阵、曲线与页面截图
 ```
 
-## 2. 环境安装
+## 4. 环境安装
 
 ```bash
 python -m venv .venv
@@ -38,7 +52,7 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
 
 验证：`python -c "import torch; print(torch.__version__, torch.cuda.is_available())"`
 
-## 3. 数据集获取
+## 5. 数据集获取
 
 1. 打开 https://aistudio.baidu.com/datasetdetail/128034 下载 `垃圾分类.zip`（约 86MB）
 2. 解压到 `dataset/_raw/`，使路径为 `dataset/_raw/Garbage classification/Garbage classification/<类别>/*.jpg`
@@ -50,7 +64,7 @@ python src/split_dataset.py
 
 输出：`dataset/train|val|test/<class>/`、`dataset/dataset_manifest.csv`、`dataset/samples/`（12 张测试集样例）。
 
-## 4. 模型训练
+## 6. 模型训练
 
 ```bash
 # 最终模型 E4（MobileNetV3-Small，验证集 Macro-F1 最高）
@@ -70,7 +84,7 @@ copy models\experiments\E4_mobilenet_v3_lr5e-4_aug_best.pth models\best_model.pt
 cp models/experiments/E4_mobilenet_v3_lr5e-4_aug_best.pth models/best_model.pth        # Linux/macOS
 ```
 
-## 5. 模型评估
+## 7. 模型评估
 
 ```bash
 python src/evaluate.py --checkpoint models/best_model.pth --split test
@@ -97,7 +111,7 @@ python src/evaluate.py --checkpoint models/best_model.pth --split test
 | 塑料（plastic）   | 0.9143 | 0.8889 | 0.9014 | 72     |
 | 其他垃圾（trash） | 0.8571 | 0.8571 | 0.8571 | 21     |
 
-## 6. TensorBoard
+## 8. TensorBoard
 
 ```bash
 tensorboard --logdir runs --port 6006
@@ -113,14 +127,14 @@ tensorboard --logdir runs --port 6006
 | E3_resnet18_lr3e-4_aug           | ResNet18（预训练 + 增强 + 冻结3轮） | 有   | 3e-4   | 18       | 90.74%         | 0.8890            | 11.8 min |
 | E4_mobilenet_v3_lr5e-4_aug       | MobileNetV3-Small（预训练 + 增强）  | 有   | 5e-4   | 12       | 92.59%         | 0.9188            | 10.8 min |
 
-## 7. 单张图片推理
+## 9. 单张图片推理
 
 ```bash
 python src/predict.py --image dataset/test/plastic/plastic100.jpg --topk 3
 python src/predict.py --image demo.jpg --save outputs/pred.jpg     # 保存带标注结果图
 ```
 
-## 8. 启动前端
+## 10. 启动前端
 
 **一键启动（推荐）**：双击项目根目录的 `一键运行.bat`。脚本会自动完成：检查 Python 与模型文件 →
 缺依赖时安装 `requirements.txt` → 检测端口占用（5000 被占用则改用 8000）→ 启动 Flask 服务 → 5 秒后自动打开浏览器。
@@ -140,7 +154,7 @@ python src/app.py --port 8000      # 指定端口
 - `GET /api/samples`：数据集样例图列表（页面底部缩略图）
 - `POST /api/predict`：`multipart/form-data`，字段名 `file`，返回 top1 / topk / advice / inference_ms
 
-## 9. 模型文件说明
+## 11. 模型文件说明
 
 | 项目     | 内容                                                                                     |
 | -------- | ---------------------------------------------------------------------------------------- |
@@ -152,7 +166,7 @@ python src/app.py --port 8000      # 指定端口
 | 类别顺序 | cardboard, glass, metal, paper, plastic, trash                                           |
 | 加载     | `torch.load(..., map_location=device)` → `model.load_state_dict(state)` → `model.eval()` |
 
-## 10. 已知问题
+## 12. 已知问题
 
 - 数据集较小（2524 张）且类别不均衡，`trash` 类仅 137 张，该类别召回率相对偏低；
 - 只做整图分类，一张图片中出现多件垃圾时只能给出一个结果；
@@ -160,7 +174,7 @@ python src/app.py --port 8000      # 指定端口
 - 未做量化与容器化，CPU 推理耗时高于 GPU；
 - 摄像头采集依赖浏览器授权，部分环境需 HTTPS 或 localhost 才能调用。
 
-## 11. AI 工具使用说明
+## 13. AI 工具使用说明
 
 开发过程中使用生成式 AI 辅助代码草稿、报告文字整理与绘图脚本编写。所有结果均由本人运行验证：
 数据划分来自 `src/split_dataset.py` 实际输出，曲线来自真实 TensorBoard 事件文件，指标由 `src/evaluate.py`

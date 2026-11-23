@@ -2,4 +2,4 @@
 项目地址：https://github.com/cdmxz/gc_project
 仓库可见性：公开
 说明：仓库包含完整源代码（src/、frontend/）、数据划分清单、TensorBoard 日志与模型权重 best_model.pth。
-     原始图片与演示视频体积较大，未入库，可按 README 第 3 节用脚本重建数据集。
+     原始图片与演示视频体积较大，未入库，可按 README 第 5 节用脚本重建数据集。
