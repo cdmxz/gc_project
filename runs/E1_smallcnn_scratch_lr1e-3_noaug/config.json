@@ -1,0 +1,31 @@
+{
+  "exp_name": "E1_smallcnn_scratch_lr1e-3_noaug",
+  "model": "smallcnn",
+  "epochs": 20,
+  "lr": 0.001,
+  "batch_size": 32,
+  "weight_decay": 0.0001,
+  "label_smoothing": 0.1,
+  "scheduler": "cosine",
+  "freeze_epochs": 0,
+  "augment": false,
+  "pretrained": false,
+  "seed": 42,
+  "img_size": 224,
+  "optimizer": "AdamW",
+  "loss": "CrossEntropyLoss",
+  "num_classes": 6,
+  "class_names": [
+    "cardboard",
+    "glass",
+    "metal",
+    "paper",
+    "plastic",
+    "trash"
+  ],
+  "device": "cuda",
+  "torch": "2.9.0+cu128",
+  "params": 242310,
+  "train_size": 1768,
+  "val_size": 378
+}

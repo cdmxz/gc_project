@@ -1,0 +1,9 @@
+{
+  "exp_name": "E4_mobilenet_v3_lr5e-4_aug",
+  "best_epoch": 12,
+  "best_val_f1": 0.9188135612773958,
+  "best_val_acc": 0.9259259259259259,
+  "last_val_acc": 0.9206349206349206,
+  "total_time_s": 647.5,
+  "checkpoint": "models\\experiments\\E4_mobilenet_v3_lr5e-4_aug_best.pth"
+}

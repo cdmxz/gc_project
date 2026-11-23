@@ -1,0 +1,9 @@
+{
+  "exp_name": "E1_smallcnn_scratch_lr1e-3_noaug",
+  "best_epoch": 17,
+  "best_val_f1": 0.6841578108219913,
+  "best_val_acc": 0.7328042328042328,
+  "last_val_acc": 0.7354497354497355,
+  "total_time_s": 650.3,
+  "checkpoint": "models\\experiments\\E1_smallcnn_scratch_lr1e-3_noaug_best.pth"
+}

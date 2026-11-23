@@ -1,0 +1,30 @@
+{
+  "image": "dataset\\test\\plastic\\plastic100.jpg",
+  "model": "mobilenet_v3",
+  "params": 1524006,
+  "top1": {
+    "class_name": "plastic",
+    "class_zh": "塑料",
+    "probability": 0.915
+  },
+  "topk": [
+    {
+      "class_name": "plastic",
+      "class_zh": "塑料",
+      "probability": 0.915
+    },
+    {
+      "class_name": "cardboard",
+      "class_zh": "纸板",
+      "probability": 0.0225
+    },
+    {
+      "class_name": "trash",
+      "class_zh": "其他垃圾",
+      "probability": 0.0224
+    }
+  ],
+  "inference_ms": 5.49,
+  "device": "cuda",
+  "advice": "可回收物：清空并压扁后投放"
+}

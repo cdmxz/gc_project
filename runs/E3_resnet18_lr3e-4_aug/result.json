@@ -1,0 +1,9 @@
+{
+  "exp_name": "E3_resnet18_lr3e-4_aug",
+  "best_epoch": 18,
+  "best_val_f1": 0.888979074173491,
+  "best_val_acc": 0.9074074074074074,
+  "last_val_acc": 0.9047619047619048,
+  "total_time_s": 705.0,
+  "checkpoint": "models\\experiments\\E3_resnet18_lr3e-4_aug_best.pth"
+}

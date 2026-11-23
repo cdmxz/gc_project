@@ -1,0 +1,7 @@
+﻿file_name,true,pred,confidence,top3
+paper594.jpg,paper,trash,0.93453443,trash:0.9345|paper:0.0515|cardboard:0.0056
+cardboard331.jpg,cardboard,paper,0.89068115,paper:0.8907|cardboard:0.0480|trash:0.0235
+metal256.jpg,metal,glass,0.88606465,glass:0.8861|metal:0.0556|cardboard:0.0187
+glass55.jpg,glass,plastic,0.8707288,plastic:0.8707|glass:0.0376|metal:0.0296
+cardboard294.jpg,cardboard,paper,0.81849116,paper:0.8185|cardboard:0.1136|glass:0.0227
+cardboard254.jpg,cardboard,paper,0.80692005,paper:0.8069|cardboard:0.0873|trash:0.0480

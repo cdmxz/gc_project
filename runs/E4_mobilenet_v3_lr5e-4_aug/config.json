@@ -1,0 +1,31 @@
+{
+  "exp_name": "E4_mobilenet_v3_lr5e-4_aug",
+  "model": "mobilenet_v3",
+  "epochs": 20,
+  "lr": 0.0005,
+  "batch_size": 32,
+  "weight_decay": 0.0001,
+  "label_smoothing": 0.1,
+  "scheduler": "cosine",
+  "freeze_epochs": 0,
+  "augment": true,
+  "pretrained": true,
+  "seed": 42,
+  "img_size": 224,
+  "optimizer": "AdamW",
+  "loss": "CrossEntropyLoss",
+  "num_classes": 6,
+  "class_names": [
+    "cardboard",
+    "glass",
+    "metal",
+    "paper",
+    "plastic",
+    "trash"
+  ],
+  "device": "cuda",
+  "torch": "2.9.0+cu128",
+  "params": 1524006,
+  "train_size": 1768,
+  "val_size": 378
+}
