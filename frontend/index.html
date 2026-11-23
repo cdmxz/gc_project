@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>垃圾图像智能分类系统 · PyTorch + Flask</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">GC</div>
+      <div>
+        <h1>垃圾图像智能分类系统</h1>
+        <p class="subtitle">PyTorch 迁移学习 · Flask 实时推理 · 六类生活垃圾识别</p>
+      </div>
+    </div>
+    <div class="status-group">
+      <span id="statusDot" class="dot dot-loading"></span>
+      <span id="statusText" class="status-text">正在连接服务…</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- 左：上传与预览 -->
+    <section class="card upload-card">
+      <div class="card-head">
+        <h2>1. 选择待识别图片</h2>
+        <button id="resetBtn" class="btn btn-ghost" type="button">重新选择</button>
+      </div>
+
+      <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="上传图片">
+        <div id="emptyState" class="empty-state">
+          <svg viewBox="0 0 24 24" class="icon-upload" aria-hidden="true">
+            <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <p class="empty-title">点击、拖拽或粘贴图片到这里</p>
+          <p class="empty-tip">支持 JPG / PNG / BMP / WEBP，单张不超过 8MB</p>
+        </div>
+        <img id="preview" class="preview hidden" alt="待预测图片预览" />
+        <div id="dropHint" class="drop-hint hidden">松开鼠标即可上传</div>
+      </div>
+
+      <div class="upload-actions">
+        <input id="fileInput" type="file" accept="image/jpeg,image/png,image/bmp,image/webp" hidden />
+        <button id="pickBtn" class="btn btn-primary" type="button">选择本地图片</button>
+        <button id="cameraBtn" class="btn btn-secondary" type="button">调用摄像头</button>
+        <button id="predictBtn" class="btn btn-accent" type="button" disabled>开始识别</button>
+      </div>
+
+      <div id="fileMeta" class="file-meta">尚未选择图片</div>
+      <div id="errorBox" class="alert alert-error hidden" role="alert"></div>
+    </section>
+
+    <!-- 右：预测结果 -->
+    <section class="card result-card">
+      <div class="card-head">
+        <h2>2. 模型预测结果</h2>
+        <span id="latency" class="chip chip-muted">推理耗时 —</span>
+      </div>
+
+      <div id="resultIdle" class="result-idle">
+        <svg viewBox="0 0 24 24" class="icon-scan" aria-hidden="true">
+          <path d="M4 8V6a2 2 0 0 1 2-2h2M20 8V6a2 2 0 0 0-2-2h-2M4 16v2a2 2 0 0 0 2 2h2m12-4v2a2 2 0 0 1-2 2h-2"
+                fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <p>上传图片后点击「开始识别」，结果由 <code>best_model.pth</code> 实时推理生成</p>
+      </div>
+
+      <div id="resultLoading" class="result-loading hidden">
+        <div class="spinner"></div>
+        <p>模型正在推理，请稍候…</p>
+      </div>
+
+      <div id="resultBox" class="result-box hidden">
+        <div class="top1">
+          <div class="top1-badge">
+            <span class="top1-label">预测类别</span>
+            <strong id="top1Name" class="top1-name">—</strong>
+            <span id="top1En" class="top1-en">—</span>
+          </div>
+          <div class="confidence">
+            <span class="top1-label">置信度</span>
+            <strong id="top1Conf" class="conf-value">—</strong>
+          </div>
+        </div>
+
+        <div class="advice" id="adviceBox">
+          <span class="advice-label">投放建议</span>
+          <p id="adviceText">—</p>
+        </div>
+
+        <h3 class="sub-title">Top-3 预测概率</h3>
+        <ul id="topkList" class="topk-list"></ul>
+
+        <div class="result-footer">
+          <span id="modelTag" class="chip chip-muted">模型 —</span>
+          <span id="deviceTag" class="chip chip-muted">设备 —</span>
+          <button id="againBtn" class="btn btn-ghost" type="button">再次预测</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="card info-card">
+    <div class="card-head">
+      <h2>模型与数据说明</h2>
+      <span class="chip chip-ok" id="modelReadyTag">状态未知</span>
+    </div>
+    <div class="info-grid">
+      <div class="info-item"><span class="info-key">模型结构</span><span class="info-value" id="infoModel">—</span></div>
+      <div class="info-item"><span class="info-key">参数量</span><span class="info-value" id="infoParams">—</span></div>
+      <div class="info-item"><span class="info-key">输入尺寸</span><span class="info-value" id="infoSize">—</span></div>
+      <div class="info-item"><span class="info-key">类别数</span><span class="info-value" id="infoClasses">—</span></div>
+      <div class="info-item"><span class="info-key">运行设备</span><span class="info-value" id="infoDevice">—</span></div>
+      <div class="info-item"><span class="info-key">模型加载时间</span><span class="info-value" id="infoLoaded">—</span></div>
+    </div>
+    <h3 class="sub-title">数据集样例（来自测试集，未参与训练）</h3>
+    <div id="sampleRow" class="sample-row"></div>
+    <p class="footnote">
+      数据来源：飞桨 AI Studio 公开数据集「垃圾分类」（datasetdetail/128034），6 类共 2527 张真实拍摄图片。
+      模型推理全程在服务端完成，页面不保存任何预测答案。
+    </p>
+  </section>
+
+  <!-- 摄像头弹窗 -->
+  <div id="cameraModal" class="modal hidden">
+    <div class="modal-body">
+      <h3>摄像头采集</h3>
+      <video id="video" autoplay playsinline></video>
+      <div class="modal-actions">
+        <button id="captureBtn" class="btn btn-primary" type="button">拍照并识别</button>
+        <button id="closeCameraBtn" class="btn btn-ghost" type="button">关闭</button>
+      </div>
+      <p class="modal-tip">若无摄像头或未授权，请使用「选择本地图片」。</p>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    <span>深度学习案例项目 · 基于 PyTorch 的智能视觉应用设计与实现</span>
+    <span id="versionTag">v1.0.0</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

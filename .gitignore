@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 原始与划分后的图片（体积大，可按 src/split_dataset.py 重建；压缩包内另附清单与样例）
+dataset/_raw/
+dataset/train/
+dataset/val/
+dataset/test/
+
+# 每组实验的中间权重（只保留最终 best_model.pth）
+models/experiments/
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+~$*
+
+# 打包中间产物
+_package/
+*.zip
+
+# 报告预览与临时文件
+outputs/_preview/
+outputs/_*.png
+report/*.pdf
+video/_build/
+
+# 报告副本目录（与 report/ 内容一致，不入库避免重复）
+docs/
+
+# 演示视频与报告文档不入库（体积大，单独提交）
+video/
+report/
